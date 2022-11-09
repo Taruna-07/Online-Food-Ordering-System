@@ -1,0 +1,625 @@
+﻿Drop table Customer;
+Drop table Restaurant_Category;
+Drop table Restaurant;
+Drop table Dishes;
+Drop table Review;
+Drop table Messages;
+Drop table Customer_cart;
+Drop table Discount;
+Drop table Customer_discount;
+Drop table Tax;
+Drop table Orders;
+
+
+
+
+Create table Customer(
+Cust_id int not null primary key,
+Cust_name varchar(200),
+Cust_address varchar(700),
+Cust_zipcode int,
+Cust_email varchar(100),
+Cust_mobno int,
+Cust_credit int);
+
+
+
+
+Create table Restaurant_Category(
+Rc_id int not null primary key,
+Rc_name varchar(100)
+);
+
+
+Create table Restaurant(
+Res_id int not null primary key,
+Cust_id int,
+foreign key(cust_id) references Customer(Cust_id),
+Rc_id int,
+foreign key(Rc_id) references Restaurant_Category(Rc_id),
+Res_name varchar(100),
+Res_address varchar(700),
+Res_mobno int,
+Current_status varchar(50),
+Res_zipcode int,
+Opening_time interval day to second,
+Closing_time interval day to second,
+Avg_wait_time interval day to second,
+Avg_review_score int
+);
+
+
+Create table Dishes(
+Dish_id int not null primary key,
+Res_id int,
+foreign key(Res_id) references Restaurant(Res_id),
+Dish_name varchar(200),
+Price int);
+
+
+Create table Review(
+Re_id int not null primary key,
+Cust_id int,
+foreign key(Cust_id) references Customer(Cust_id),
+Res_id int,
+foreign key(Res_id) references Restaurant(Res_id),
+Review_date date,
+Review_score int,
+comments varchar(500));
+
+
+
+
+Create table Messages(
+Me_id int not null primary key,
+cust_id int,
+foreign key(cust_id) references Customer(cust_id),
+Me_time timestamp,
+Me_body varchar(700));
+
+
+Create table Customer_cart(
+Cc_id int not null primary key,
+Cust_id int,
+foreign key(Cust_id) references Customer(Cust_id),
+Res_id int,
+foreign key(Res_id) references Restaurant(Res_id));
+
+
+
+
+Create table Discount(
+Dis_id int not null primary key,
+Description varchar(700),
+type int,
+amount float);
+
+
+Create table Customer_discount(
+Cd_id int not null primary key,
+Cust_id int,
+foreign key(Cust_id) references Customer(Cust_id),
+Dis_id int,
+foreign key(Dis_id) references Discount(Dis_id),
+Custdis_startdate date,
+Custdis_enddate date);
+
+
+Create table Tax(
+Tax_id int not null primary key,
+Tax_state varchar(30),
+State_zipcode int,
+Tax_rate int);
+
+
+Create table Orders(
+Or_id int not null primary key,
+Cust_id int,
+foreign key(Cust_id) references Customer(Cust_id),
+Res_id int,
+foreign key(Res_id) references Restaurant(Res_id),
+Or_time timestamp,
+De_fee float,
+tip float,
+De_time interval day to second,
+Estimated_time interval day to second,
+Or_status varchar(70),
+Pay_status varchar(70));
+
+
+
+
+
+
+
+
+Insert into Customer values(
+101,
+'Marc',
+'205, Garden Ridge, MD', 
+21228,
+'marc@gmail.com',
+4432519031, 
+2 -- 2 Credit because ordered many food items.
+);
+
+
+Insert into Customer values(
+102,
+'Jeff',
+'226, Mount Ridge, MD',
+21222,
+'jeff@gmail.com',
+4108695517,
+1 -- 1 Credit because ordered frequently.
+);
+
+
+Insert into Customer values(
+103,
+'Geo',
+'226, 5002 Westland, TN',
+37013,
+'geo@gmail.com',
+6674640048,
+3 -- 3 Credit because ordered cancelled.
+);
+
+
+Insert into Customer values(
+104,
+'Damon',
+'413, Jamestone LA',
+90001,
+'damon@gmail.com',
+4321014817,
+3 -- 3 Credit because ordered cancelled.
+);
+
+
+Insert into Customer values(
+105,
+'Crise',
+'A52, Silverspring CO',
+80131,
+'crise@gmail.com',
+6364739765,
+1
+);
+
+
+Insert into Customer values(
+106,
+'Suhwan',
+'67, Maidenchoice NY',
+10001,
+'suhwan@gmail.com',
+4102456789,
+2
+);
+
+
+Insert into Customer values(
+107,
+'Weiwei',
+'783, Charlestone OH',
+45011,
+'weiwei@gmail.com',
+4821016618,
+2
+);
+
+
+select * from Customer;
+
+
+Insert into Restaurant_Category values
+(11,
+'Indian');
+
+
+Insert into Restaurant_Category values
+(12,
+'Mexican');
+
+
+Insert into Restaurant_Category values
+(13,
+'Italian');
+
+
+Insert into Restaurant_Category values
+(14,
+'Chinese');
+
+
+select * from Restaurant_Category;
+
+
+Insert into Restaurant values(
+1,
+102,
+11,
+'Royal Palace',
+'New Orleans',
+9420187715,
+02, --02 is for Restaurant Closed
+70032,
+to_dsinterval('0 09:00:00'),
+to_dsinterval('0 22:00:00'),
+to_dsinterval('0 00:19:00'),
+5 --5 star for Excellent review score
+);
+
+
+Insert into Restaurant values(
+2,
+102,
+12,
+'Mystic Plaza',
+'Connecticut',
+4902896610,
+02, --02 is for Restaurant Closed
+06051,
+to_dsinterval('0 10:30:00'),
+to_dsinterval('0 23:30:00'),
+to_dsinterval('0 00:25:33'),
+2 --2 star for Average review score
+);
+
+
+
+
+Insert into Restaurant values(
+3,
+104,
+11,
+'Alex Star',
+'Chicago',
+93451088168,
+01, --01 is for Restaurant Opened
+60007,
+to_dsinterval('0 11:15:00'),
+to_dsinterval('0 23:45:00'),
+to_dsinterval('0 00:25:33'),
+2 --2 star for Average review score
+);
+
+
+Insert into Restaurant values(
+4,
+103,
+14,
+'Stone Crab',
+'Miami Beach',
+4115517051,
+02,
+33101,
+to_dsinterval('0 09:30:00'),
+to_dsinterval('0 21:00:00'),
+to_dsinterval('0 00:30:30'),
+3 --3 star for Good review score
+);
+
+
+Insert into Restaurant values(
+5,
+101,
+11,
+'Blue stone',
+'Nashville',
+6264739750,
+01,
+37011,
+to_dsinterval('0 13:00:00'),
+to_dsinterval('0 22:30:00'),
+to_dsinterval('0 00:40:10'),
+4 --4 star for better review score
+);
+
+
+Insert into Restaurant values(
+6,
+101,
+13,
+'Night Steak House',
+'Indianapollis',
+3126355635,
+01,
+46077,
+to_dsinterval('0 12:30:00'),
+to_dsinterval('0 19:00:00'),
+to_dsinterval('0 00:50:05'),
+5 --5 star for excellent review score
+);
+
+
+Insert into Restaurant values(
+7,
+107,
+12,
+'Asian BBQ',
+'Lexington',
+9787634740,
+02,
+40502,
+to_dsinterval('0 08:30:00'),
+to_dsinterval('0 18:30:00'),
+to_dsinterval('0 00:21:10'),
+3 --3 star for good review score
+);
+
+
+select * from Restaurant;
+
+
+insert into Dishes values(
+21,
+1,
+'Biryani',
+20);
+
+
+insert into Dishes values(
+22,
+2,
+'Tacos',
+15);
+
+
+insert into Dishes values(
+23,
+3,
+'Chicken Tikka',
+25);
+
+
+insert into Dishes values(
+24,
+4,
+'Ramen',
+5);
+
+
+insert into Dishes values(
+25,
+5,
+'Paneer Tikka',
+17);
+
+
+insert into Dishes values(
+26,
+6,
+'Pasta',
+8);
+
+
+insert into Dishes values(
+27,
+7,
+'Tofu',
+10);
+
+
+select * from Dishes;
+
+
+insert into Review values(
+31,
+102,
+1,
+date'2022-09-09',
+5,
+'Loved it');
+
+
+insert into Review values(
+32,
+104,
+3,
+date'2022-10-12',
+2,
+'Average');
+
+
+insert into Review values(
+33,
+101,
+5,
+date'2021-07-05',
+1,
+'Taste Sucks');
+
+
+select * from Review;
+
+
+
+
+
+
+
+
+
+
+insert into Customer_cart values(
+41,
+102,
+1);
+
+
+insert into Customer_cart values(
+42,
+104,
+3);
+
+
+insert into Customer_cart values(
+43,
+101,
+5);
+
+
+select * from Customer_cart;
+
+
+insert into Discount values(
+51,
+'Happy Hallowen',
+1,
+7);
+
+
+insert into Discount values(
+52,
+'Happy Christmas',
+2,
+0.3);
+
+
+insert into Discount values(
+53,
+'Happy Diwali',
+3,
+40);
+
+
+insert into Discount values(
+54,
+'Happy Newyear',
+3,
+10);
+
+
+select * from Discount;
+
+
+insert into Customer_discount values(
+61,
+102,
+51,
+date'2022-10-27',
+date'2022-11-01');
+
+
+insert into Customer_discount values(
+62,
+104,
+52,
+date'2022-12-22',
+date'2022-12-26');
+
+
+insert into Customer_discount values(
+63,
+101,
+53,
+date'2022-10-22',
+date'2022-10-25');
+
+
+insert into Customer_discount values(
+64,
+103,
+54,
+date'2022-12-29',
+date'2023-01-01');
+
+
+insert into Customer_discount values(
+65,
+107,
+53,
+date'2022-10-22',
+date'2022-10-25');
+
+
+select * from Customer_discount;
+
+
+insert into Tax values(
+71,
+'MD',
+21228,
+6);
+
+
+insert into Tax values(
+72,
+'CO',
+80131,
+9);
+
+
+insert into Tax values(
+73,
+'NY',
+10001,
+12);
+
+
+insert into Tax values(
+74,
+'OH',
+45011,
+7);
+
+
+insert into Tax values(
+75,
+'LA',
+90001,
+15);
+
+
+insert into Tax values(
+76,
+'TN',
+37013,
+5);
+
+
+select * from Tax;
+
+
+insert into Orders values( 
+81,
+102,
+1,
+timestamp'2022-10-30 18:00:00',
+10,
+5,
+to_dsinterval('0 00:25:00'),
+to_dsinterval('0 00:20:00'),
+'Delivered',
+'Paid')
+
+
+insert into Orders values( 
+82,
+104,
+3,
+timestamp'2022-10-12 20:10:00',
+0,
+0,
+to_dsinterval('0 00:00:00'),
+to_dsinterval('0 00:00:00'),
+'Cancelled',
+'Refunded')
+
+
+insert into Orders values( 
+83,
+101,
+5,
+timestamp'2021-07-05 10:30:00',
+13,
+5,
+to_dsinterval('0 00:50:00'),
+to_dsinterval('0 00:35:00'),
+'In progess',
+'Paid')
+
+
+select * from Orders;

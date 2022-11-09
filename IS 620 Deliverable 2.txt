@@ -1,0 +1,275 @@
+﻿FEATURE  1: 
+Input: 
+* Customer name[a], address, state, zip, email
+
+
+Output: 
+* Print the message ‘the client already exists’ if a client with the same email exists and then updates the address, state, zip, and email. Otherwise, a new row in the customer table is created, with a new customer ID, and all the provided information is entered in that row. The new customer ID is also printed out.
+
+
+Test Cases:
+* Regular Case:
+   * EXEC add_customer(‘Billy’, ‘9961 New Foundland Ave’, ‘MD’, 22166, ‘billybobjoe@gmail.com’);
+* Existing Case (the same client is added again)
+   * EXEC add_customer(‘Billy’, ‘9961 New Foundland Ave’, ‘MD’, 22166, ‘billybobjoe@gmail.com’);
+
+
+FEATURE 2:
+Input: 
+* Customer email
+
+
+Output: 
+* If there is not a customer with that email, the message ‘no such customer’ is printed. If there is a customer with that email, the customer’s name, address, state, zip, email, credit, total number of orders with status 2 (delivered) in the last six months, and total amount spent in the last six months (from status 2 orders) are printed. 
+
+
+Test Cases:
+* Regular Case (email is updated to existing customer):
+   * EXEC customer_recent_purchases (‘billybobjoe@gmail.com’);
+* Customer Not Existing Case:
+   * EXEC customer_recent_purchases (‘unknown@gmail.com’);
+
+
+
+
+FEATURE 3:
+Input: 
+* A restaurant category name or part of a restaurant name
+
+
+Output:
+* Restaurants with a matching category will have their name, average review score, average wait time, and zip code printed out only for restaurants that are open at the query execution time.
+
+
+Test Cases:
+* Regular Case (restaurants in that category exist):
+   * EXEC restaurants_by_category (‘Italian’);
+* Restaurant Category Not Existing Case:
+   * EXEC restaurants_by_category (‘Fake Food’);
+
+
+
+
+FEATURE 4:
+Input:
+* A restaurant ID
+
+
+Output:
+* The restaurant ID input by the user is checked to see whether the restaurant exists, if not, a message ‘no such restaurant’ is printed. If the restaurant exists, all dishes of that restaurant, along with their names and prices, are printed.
+
+
+Test Cases:
+* Regular Case:
+   * EXEC restaurant_dishes (1);
+* Restaurant Not Existing Case:
+   * EXEC restaurant_dishes (1000000);
+
+
+FEATURE 5:
+Input:
+* Cart ID
+
+
+Output:
+* If the provided cart ID is invalid, a message ‘invalid cart ID’ is printed. If the provided cart ID is valid, then every dish in the shopping cart is printed including their name, price, and quantity.
+
+
+Test Cases:
+* Regular Case:
+   * EXEC dishes_in_cart (1);
+* Cart Not Existing Case
+   * EXEC dishes_in_cart (-100);
+
+
+FEATURE 6:
+Input:
+* Dish ID and cart ID
+
+
+Output:
+* If the cart with the provided ID does not have the specified dish, an ‘Invalid Input’ message is displayed. If the cart ID does not exist, print out the same message specified before. If the dish ID is valid, then check the quantity of the dish in the cart. If there is more than one of the dish, the quantity of that dish is reduced and the message ‘quantity reduced’ is given. If the quantity is only one, then the quantity is reduced to 0 and a message ‘dish removed’ is displayed.
+
+
+Test Cases:
+* Regular Case (dish is completely removed from cart):
+   * EXEC remove_dish (15, 1);
+* Dish Not Existing in Cart
+   * EXEC remove_dish (100, 1);
+* Dish Has a Quantity Greater Than One (quantity is subtracted by one):
+   * EXEC remove_dish (5, 1);
+
+
+FEATURE 7:
+Input:
+* Order ID, New Status, Input Time
+
+
+Output:
+* If the given order ID is invalid, a message is printed saying ‘invalid order id’
+* The status of the order is updated to the input status
+* If the  new status is ‘delivered’, a message is inserted into the message table for the corresponding customer, with message time as input time, and message body saying 'Your order X has been delivered!' where X is the order ID.
+* If the new status is ‘canceled’, update the status to canceled, insert a message into message table for the corresponding customer, with message time as input time, and message body saying 'Your order X has been canceled and refund issued!' where X is the order ID. 
+* A refund record is inserted into the payment table with a new payment ID, the corresponding customer id and order id, time as input time, and amount as the negative of the total amount in the order, and payment method the same as the original payment record.  
+  
+Test Cases:
+* Regular Case (new status is ‘in progress’):
+   * EXEC update_order_status (1, ‘in progress’, TIMESTAMP('2022-09-23 03:23:34.234'));
+* Order ID is Not Valid
+   * EXEC update_order_status (-9, ‘in progress’, TIMESTAMP('2022-09-23 03:23:34.234'));
+* New status is ‘delivered’
+   * EXEC update_order_status (12, ‘in progress’, TIMESTAMP('2022-09-23 03:23:34.234'));
+* New status is ‘canceled’
+   * EXEC update_order_status (1, ‘canceled’, TIMESTAMP('2022-09-23 03:23:34.234'));
+
+
+FEATURE 8:
+Input:
+* Customer ID, restaurant ID, review date, review score, review comment
+
+
+Output:
+* If the customer ID is not valid, print a message saying ‘invalid customer ID’
+* If the restaurant ID is not valid, print a message saying ‘invalid restaurant ID’
+* If the customer ID and restaurant ID are both valid, insert a row into the review table with the input customer id, restaurant ID, review date, score and comment. The average review score for the restaurant is also updated to reflect the new review
+
+
+Test Cases:
+* Regular Case (customer and restaurant ID both exist):
+   * EXEC enter_review (1, 1, TIMESTAMP('2022-09-23 03:23:34.234'), 5, ‘fantastic food’);
+* Customer ID does not exist:
+   * EXEC enter_review (-1, 1, TIMESTAMP('2022-09-23 03:23:34.234'), 5, ‘fantastic food’);
+* Restaurant ID does not exist:
+   * EXEC enter_review (-100, 1, TIMESTAMP('2022-09-23 03:23:34.234'), 5, ‘fantastic food’);
+
+
+FEATURE 9:
+Input:
+* Restaurant ID
+
+
+Output:
+* If the restaurant ID is not valid, a message is printed ‘invalid restaurant ID’
+* If the restaurant ID is valid, then all the reviews of the specified restaurant are printed which includes their review date, score, and comment
+
+
+Test Cases:
+* Regular Case (valid restaurant ID):
+   * EXEC restaurant_reviews (1);
+* Invalid restaurant ID:
+   * EXEC restaurant_reviews (-1);
+
+
+FEATURE 10:
+Input:
+* Customer ID, restaurant ID, dish ID
+
+
+Output:
+* If the customer ID is invalid,  print out the message ‘no such customer’
+* If the restaurant ID is invalid, restaurant print ‘invalid restaurant ID’
+* If the selected restaurant ID is closed, print ‘the restaurant is closed’
+* If the dish does not belong to the selected restaurant, print ‘invalid dish ID’
+* If there is not an existing shopping cart for the customer, a new cart is created for the customer and restaurant, then the new cart ID is printed
+* If the dish is already in the cart, the quantity is increased by one
+* If the dish is new to the customer cart, a new row is added to their cart
+Test Cases:
+* Regular Case (dish is added to customer cart or quantity of the dish is increased):
+   * EXEC add_dish_to_cart(1, 1, 5);
+* Invalid Customer ID:
+   * EXEC add_dish_to_cart(-1, 1, 5);
+* Invalid restaurant ID:
+   * EXEC add_dish_to_cart(1, -1, 5);
+* Restaurant is closed:
+   * EXEC add_dish_to_cart(1, 2, 5);
+* Dish does not belong to the restaurant:
+   * EXEC add_dish_to_cart(1, 3, 5);
+* No Cart for the customer exist, a new cart is created with the specified dish is added 
+   * EXEC add_dish_to_cart(1, 1, 5);
+
+
+FEATURE 11:
+Input:
+* Cart ID, checkout time, delivery method
+
+
+Output:
+* If the cart ID is invalid, a message ‘invalid car ID’ is printed
+* Total cost of the dishes in the cart is computed: sum up price * quantity of each dish in the cart, discount is then applied for the customer if the discount is still valid at checkout time (fixed or sum discount), delivery fee is added (there may be free delivery or varying price based on zip code), sales tax is added based on the state of the restaurant. The total is returned and the delivery fee, tax, and amount for dishes is also returned
+Test Cases:
+* Regular Case (valid cart ID and checkout time):
+   * EXEC cart_checkout (1, TIMESTAMP('2022-09-23 10:23:34.234'), 1);
+* Invalid checkout time:
+   * EXEC cart_checkout (1, TIMESTAMP('2022-09-23 04:23:34.234'), 1);
+* Invalid cart ID
+   * EXEC cart_checkout (-1, TIMESTAMP('2022-09-23 10:23:34.234'), 1);
+
+
+FEATURE 12:
+Input:
+* Cart ID, order time, delivery method, estimated delivery time, tip, payment method
+* Feature 11 is called within to compute total amount due
+
+
+Output:
+* If cart ID is invalid, a message ‘invalid car ID’ is printed
+* Insert a row into orders table with a newly generated order ID, customer ID as the cart's customer ID, restaurant ID as the cart's restaurant ID, order time as the input order time, delivery time is null, estimated time as the input estimated time, status is in progress, delivery method is the input delivery method, delivery fee, tax, and total are returned in feature 11, and tip is the input tip.
+* Insert dishes in the shopping cart into the table that stores dishes in the order. Delete the shopping cart row and dishes in the cart.
+* Insert into message table a message with customer ID as the customer ID associated with the cart, message time as the order time, and body as 'A new order X is placed at Restaurant Y with estimated time of Z and amount A', where X is the order ID, Y is the name of the restaurant, Z as input estimated time (in minutes), and A is total amount.
+* Insert a payment record to the payment table with order ID as the order ID, payment time as order time, payment amount as total computed in, and payment method as input payment method.
+
+
+Test Cases:
+* Regular Case (valid cart ID with dishes):
+   * EXEC generate_order(1, TIMESTAMP('2022-09-23 10:23:34.234'), 1, 60, 5, 1);
+* Invalid cart ID:
+   * EXEC generate_order(-1, TIMESTAMP('2022-09-23 10:23:34.234'), 1, 60, 5, 1);
+
+
+FEATURE 13:
+Input: 
+* Customer ID, list of category names, minimal review score, wait time
+
+
+Output:
+* If the customer is invalid, If not print a message ‘invalid customer’
+* Return all restaurants that are under one of the input categories, have an average review score greater or equal to the minimal score, have a wait time less or equal to the input wait time, have a zip code either the same as the customer's zip code or differ only by the last digit 
+* Print out name of restaurant, address, status, average review score, zip code, and average wait time
+Test Cases:
+* Regular Case (valid customer ID, restaurants under the category exist, meet the min review score, meet the wait time requirement, and are in a valid zip code):
+   * EXEC find_restaurants (1, v_array, 3, 25);
+* Invalid Customer ID:
+   * EXEC find_restaurants (-1, v_array, 3, 25);
+* Restaurants under the specified categories don’t exist
+   * EXEC find_restaurants (1, v_array, 3, 25);
+* Restaurants with the specified minimum score under the specified categories don’t exist:
+   * EXEC find_restaurants (2, v_array, 3, 35);
+* Restaurants with the specified wait time don’t exist:
+   * EXEC find_restaurants (2, v_array, 3, 45);
+
+
+FEATURE 14:
+Input:
+* Customer ID
+Output:
+* If customer ID is invalid, print a message ‘invalid customer ID’ and stop 
+* Print out restaurants' IDs that the customer has placed an order at
+* Print the IDs of customers who’ve ordered at the same restaurants as the specified customer
+* Print restaurant ID’s, names, addresses, and average reviews of other restaurants that other customers have been to who’ve also ordered at the restaurants the specified customer has
+
+
+Test Cases:
+* Regular Case (valid customer ID):
+   * EXEC restaurant recommendation (1);
+* Invalid Customer ID:
+   * EXEC restaurant recommendation (-1);
+[a]ER Diagram
+
+
+ER Diagram Description
+
+
+SQL Statements (drop, create, insert)
+
+
+Specification for each feature
